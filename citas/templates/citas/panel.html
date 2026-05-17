@@ -1,0 +1,397 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel · Amaly Visa{% endblock %}
+{% block nav_sub %}Panel de citas{% endblock %}
+
+{% block nav_actions %}
+<form method="POST" action="/citas/logout/">
+  {% csrf_token %}
+  <button type="submit" class="btn-outline-nav">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+  </button>
+</form>
+{% endblock %}
+
+{% block extra_css %}
+.panel-wrap { min-height: 100vh; background: var(--smoke); padding: 6rem 0 4rem; margin-top: 72px; }
+.section-label { font-size: .8rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom:
+1.2rem; }
+.btn-eliminar { background: none; border: 1px solid #fca5a5; color: var(--red); border-radius: 7px; padding: .28rem
+.75rem; font-size: .75rem; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600; display: inline-flex;
+align-items: center; gap: 4px; transition: background .2s; white-space: nowrap; }
+.btn-eliminar:hover { background: #fff5f5; }
+{% endblock %}
+
+{% block content %}
+<div class="panel-wrap">
+  <div class="container">
+
+    <div class="mb-4">
+      <span class="sec-eye">★ Panel</span>
+      <h2 class="sec-title">Citas agendadas</h2>
+      <p class="sec-desc">Hola Amaly, acá están todas las reservas.</p>
+    </div>
+
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="warn-bar mb-4" style="background:#f0fdf4;border-color:#86efac;border-left-color:#16a34a;">
+      <i class="bi bi-check-circle-fill" style="color:#16a34a;flex-shrink:0;"></i>
+      <p style="color:#14532d;">{{ msg }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <!-- FILTROS -->
+    <div class="cita-card mb-5" style="padding:1.5rem 2rem;">
+      <h5 class="section-label" style="color:var(--navy);">Filtrar citas</h5>
+      <div class="d-flex gap-4 flex-wrap align-items-end">
+        <form method="GET" action="/citas/panel/" class="d-flex gap-3 align-items-end flex-wrap">
+          <div>
+            <label class="campo-label">Por día</label>
+            <input type="date" name="fecha" class="campo-input" style="width:auto;" value="{{ fecha_filtro }}">
+          </div>
+          <button type="submit" class="btn-hero-solid" style="padding:.65rem 1.3rem;font-size:.88rem;"><i
+              class="bi bi-search"></i> Filtrar</button>
+        </form>
+        <form method="GET" action="/citas/panel/" class="d-flex gap-3 align-items-end flex-wrap">
+          <div>
+            <label class="campo-label">Por mes</label>
+            <input type="month" name="mes" class="campo-input" style="width:auto;" value="{{ mes_filtro }}">
+          </div>
+          <button type="submit" class="btn-hero-solid" style="padding:.65rem 1.3rem;font-size:.88rem;"><i
+              class="bi bi-search"></i> Filtrar</button>
+        </form>
+        {% if fecha_filtro or mes_filtro %}
+        <a href="/citas/panel/" class="btn-hero-outline" style="padding:.65rem 1.3rem;font-size:.88rem;"><i
+            class="bi bi-x"></i> Limpiar filtros</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- PRÓXIMAS -->
+    <div class="mb-5">
+      <h5 class="section-label" style="color:var(--navy);">Próximas ({{ proximas.count }})</h5>
+      {% if proximas %}
+      <div class="d-flex flex-column gap-3">
+        {% for cita in proximas %}
+        <div class="archivo-card">
+          <div class="archivo-ico ico-navy"><i class="bi bi-calendar-event"></i></div>
+          <div class="archivo-info" style="flex:1;">
+            <strong>{{ cita.nombre_apellido }}</strong>
+            <span>{{ cita.fecha|date:"d/m/Y" }} · {{ cita.horario }} hs · {{ cita.get_tipo_solicitud_display }}</span>
+            {% if cita.comentarios %}
+            <span style="display:block;font-size:.75rem;color:var(--muted);margin-top:3px;">"{{
+              cita.comentarios|truncatechars:80 }}"</span>
+            {% endif %}
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <span style="font-size:.85rem;font-weight:600;color:var(--ink);display:block;margin-bottom:4px;"><i
+                class="bi bi-telephone" style="color:var(--navy);"></i> {{ cita.telefono }}</span>
+            <span style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:8px;">{{ cita.email }}</span>
+            <form method="POST" action="/citas/panel/eliminar/{{ cita.id }}/"
+              onsubmit="return confirm('¿Eliminar este turno y liberarlo?')">
+              {% csrf_token %}
+              <button type="submit" class="btn-eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="color:var(--muted);font-size:.9rem;">No hay citas próximas{% if fecha_filtro or mes_filtro %} para ese
+        filtro{% endif %}.</p>
+      {% endif %}
+    </div>
+
+    <!-- HISTORIAL -->
+    <div class="mb-5">
+      <h5 class="section-label" style="color:var(--muted);">Historial ({{ pasadas.count }})</h5>
+      {% if pasadas %}
+      <div class="d-flex flex-column gap-3">
+        {% for cita in pasadas %}
+        <div class="archivo-card" style="opacity:.6;">
+          <div class="archivo-ico" style="background:#f0f0f0;color:#aaa;"><i class="bi bi-calendar-check"></i></div>
+          <div class="archivo-info" style="flex:1;">
+            <strong>{{ cita.nombre_apellido }}</strong>
+            <span>{{ cita.fecha|date:"d/m/Y" }} · {{ cita.horario }} hs · {{ cita.get_tipo_solicitud_display }}</span>
+          </div>
+          <div style="text-align:right;flex-shrink:0;">
+            <span style="font-size:.85rem;font-weight:600;color:var(--ink);display:block;margin-bottom:4px;">{{ cita.telefono }}</span>
+            <span style="font-size:.78rem;color:var(--muted);display:block;margin-bottom:8px;">{{ cita.email }}</span>
+            <form method="POST" action="/citas/panel/eliminar/{{ cita.id }}/"
+              onsubmit="return confirm('¿Eliminar este turno del historial?')">
+              {% csrf_token %}
+              <button type="submit"
+                style="background:none;border:1.5px solid #ddd;color:#aaa;border-radius:6px;padding:.3rem .7rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;"><i
+                  class="bi bi-trash"></i> Eliminar</button>
+            </form>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p style="color:var(--muted);font-size:.9rem;">Sin historial todavía{% if fecha_filtro or mes_filtro %} para ese
+        filtro{% endif %}.</p>
+      {% endif %}
+    </div>
+
+    <!-- DÍAS BLOQUEADOS -->
+    <div class="mb-5">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div
+            style="width:36px;height:36px;border-radius:50%;background:rgba(178,34,52,.1);display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-slash-circle" style="color:var(--red);font-size:1rem;"></i>
+          </div>
+          <div>
+            <p
+              style="margin:0;font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);">
+              ★ Agenda</p>
+            <p style="margin:0;font-size:1rem;font-weight:700;color:var(--navy);font-family:'Playfair Display',serif;">
+              Bloqueos activos
+              <span style="font-size:.85rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">({{ bloqueos.count }})</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div class="cita-card mb-4" style="padding:1.5rem 2rem;">
+        <h5 class="section-label" style="color:var(--navy);margin-bottom:1.2rem;">Agregar bloqueo</h5>
+        <form method="POST" action="{% url 'bloquear_dia' %}" class="d-flex gap-3 align-items-end flex-wrap">
+          {% csrf_token %}
+          <div>
+            <label class="campo-label">Fecha</label>
+            <input type="date" name="fecha" class="campo-input" style="width:auto;" required>
+          </div>
+          <div>
+            <label class="campo-label">Horario</label>
+            <select name="horario" class="campo-input" style="width:auto;">
+              <option value="">Día completo</option>
+              <option value="09:00">9:00 hs</option>
+              <option value="10:00">10:00 hs</option>
+              <option value="11:00">11:00 hs</option>
+              <option value="12:00">12:00 hs</option>
+            </select>
+          </div>
+          <div style="flex:1;min-width:180px;">
+            <label class="campo-label">Motivo <span
+                style="font-weight:400;color:var(--muted);">(opcional)</span></label>
+            <input type="text" name="motivo" class="campo-input" placeholder="Ej: Feriado, reunión, viaje...">
+          </div>
+          <button type="submit" class="btn-hero-solid"
+            style="padding:.65rem 1.3rem;font-size:.88rem;background:var(--red);border-color:var(--red);">
+            <i class="bi bi-slash-circle"></i> Bloquear
+          </button>
+        </form>
+      </div>
+
+      <!-- Lista -->
+      {% if bloqueos %}
+      <div class="d-flex flex-column gap-3">
+        {% for b in bloqueos %}
+        <div
+          style="background:#fff;border:1px solid #fca5a5;border-left:4px solid var(--red);border-radius:12px;padding:1rem 1.4rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div
+              style="width:40px;height:40px;border-radius:10px;background:rgba(178,34,52,.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <i class="bi bi-{% if b.es_dia_completo %}calendar-x{% else %}clock{% endif %}"
+                style="color:var(--red);font-size:1.1rem;"></i>
+            </div>
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:.95rem;font-weight:600;color:var(--ink);">{{ b.fecha|date:"d/m/Y" }}</span>
+                <span style="font-size:.75rem;color:var(--muted);">{{ b.fecha|date:"l" }}</span>
+                {% if b.es_dia_completo %}
+                <span
+                  style="font-size:.72rem;font-weight:700;background:rgba(178,34,52,.08);color:var(--red);padding:.15rem .55rem;border-radius:100px;">Día
+                  completo</span>
+                {% else %}
+                <span
+                  style="font-size:.72rem;font-weight:700;background:rgba(10,47,110,.07);color:var(--navy);padding:.15rem .55rem;border-radius:100px;">{{
+                  b.horario }} hs</span>
+                {% endif %}
+              </div>
+              {% if b.motivo %}
+              <p style="margin:3px 0 0;font-size:.82rem;color:var(--muted);">{{ b.motivo }}</p>
+              {% else %}
+              <p style="margin:3px 0 0;font-size:.82rem;color:var(--muted);font-style:italic;">Sin motivo especificado
+              </p>
+              {% endif %}
+            </div>
+          </div>
+          <form method="POST" action="{% url 'desbloquear' b.id %}"
+            onsubmit="return confirm('¿Eliminar este bloqueo?')">
+            {% csrf_token %}
+            <button type="submit"
+              style="background:none;border:1px solid #fca5a5;color:var(--red);border-radius:7px;padding:.28rem .75rem;font-size:.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:4px;transition:background .2s;"
+              onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background='none'">
+              <i class="bi bi-unlock"></i> Eliminar
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div style="text-align:center;padding:2rem;background:#fff;border:1px dashed var(--border);border-radius:14px;">
+        <i class="bi bi-calendar-check"
+          style="font-size:2rem;color:var(--border);display:block;margin-bottom:.8rem;"></i>
+        <p style="color:var(--muted);font-size:.9rem;margin:0;">No hay bloqueos activos.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- RESEÑAS -->
+    <div class="mb-5">
+      <div
+        style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div
+            style="width:36px;height:36px;border-radius:50%;background:rgba(10,47,110,.1);display:flex;align-items:center;justify-content:center;">
+            <i class="bi bi-star-fill" style="color:var(--navy);font-size:1rem;"></i>
+          </div>
+          <div>
+            <p
+              style="margin:0;font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--red);">
+              ★ Opiniones</p>
+            <p style="margin:0;font-size:1rem;font-weight:700;color:var(--navy);font-family:'Playfair Display',serif;">
+              Reseñas recibidas
+              <span style="font-size:.85rem;color:var(--muted);font-weight:400;font-family:'DM Sans',sans-serif;">({{ resenas.count }})</span>
+            </p>
+          </div>
+        </div>
+        {% if resenas.count > 0 %}
+        <span
+          style="font-size:.75rem;background:rgba(10,47,110,.07);color:var(--navy);padding:.3rem .9rem;border-radius:100px;font-weight:600;">
+          {{ resenas.count }} publicada{{ resenas.count|pluralize:"s" }}
+        </span>
+        {% endif %}
+      </div>
+
+      {% if resenas %}
+      <div class="d-flex flex-column gap-3">
+        {% for r in resenas %}
+        <div
+          style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:1.3rem 1.6rem;transition:box-shadow .2s;"
+          onmouseover="this.style.boxShadow='0 4px 20px rgba(10,47,110,.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="display:flex;gap:12px;align-items:flex-start;">
+            <div class="ava" style="background:var(--navy);width:42px;height:42px;font-size:1rem;flex-shrink:0;">{{ r.nombre|first }}</div>
+            <div style="flex:1;min-width:0;">
+              <div
+                style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px;">
+                <div>
+                  <span style="font-size:.95rem;font-weight:600;color:var(--ink);">{{ r.nombre }} {{ r.apellido }}</span>
+                  <span style="font-size:.73rem;color:var(--muted);margin-left:8px;">{{ r.creada_en|date:"d/m/Y · H:i" }} hs</span>
+                  <div style="display:flex;gap:2px;margin-top:2px;">
+                    <i class="bi bi-star-fill" style="color:#D4AF37;font-size:.7rem;"></i>
+                    <i class="bi bi-star-fill" style="color:#D4AF37;font-size:.7rem;"></i>
+                    <i class="bi bi-star-fill" style="color:#D4AF37;font-size:.7rem;"></i>
+                    <i class="bi bi-star-fill" style="color:#D4AF37;font-size:.7rem;"></i>
+                    <i class="bi bi-star-fill" style="color:#D4AF37;font-size:.7rem;"></i>
+                  </div>
+                </div>
+                <form method="POST" action="{% url 'eliminar_resena' r.id %}"
+                  onsubmit="return confirm('¿Eliminar esta reseña?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-eliminar"><i class="bi bi-trash"></i> Eliminar</button>
+                </form>
+              </div>
+              <p
+                style="margin:0 0 12px;font-size:.88rem;color:var(--ink);line-height:1.7;font-style:normal;font-family:'DM Sans',sans-serif;">
+                "{{ r.mensaje }}"</p>
+              {% if r.respuesta %}
+              <div
+                style="margin-bottom:12px;padding:.65rem 1rem;background:#EEF3FB;border-left:3px solid var(--navy);border-radius:0 8px 8px 0;">
+                <p
+                  style="margin:0;font-size:.7rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">
+                  <i class="bi bi-chat-dots-fill"></i> Tu respuesta
+                </p>
+                <p style="margin:0;font-size:.85rem;color:var(--ink);line-height:1.6;">{{ r.respuesta }}</p>
+              </div>
+              {% endif %}
+              <form method="POST" action="{% url 'responder_resena' r.id %}"
+                style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                {% csrf_token %}
+                <input type="text" name="respuesta" value="{{ r.respuesta }}"
+                  placeholder="Escribí tu respuesta pública..."
+                  style="flex:1;min-width:180px;border:1px solid var(--border);border-radius:8px;padding:.55rem 1rem;font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--ink);outline:none;transition:border-color .2s;background:#fff;"
+                  onfocus="this.style.borderColor='var(--navy)';this.style.boxShadow='0 0 0 3px rgba(10,47,110,.08)'"
+                  onblur="this.style.borderColor='var(--border)';this.style.boxShadow='none'">
+                <button type="submit" class="btn-hero-solid"
+                  style="padding:.55rem 1.2rem;font-size:.83rem;white-space:nowrap;">
+                  <i class="bi bi-{% if r.respuesta %}arrow-clockwise{% else %}send{% endif %}"></i>
+                  {% if r.respuesta %}Actualizar{% else %}Responder{% endif %}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div
+        style="text-align:center;padding:3rem 2rem;background:#fff;border:1px dashed var(--border);border-radius:14px;">
+        <i class="bi bi-chat-square-dots"
+          style="font-size:2rem;color:var(--border);display:block;margin-bottom:.8rem;"></i>
+        <p style="color:var(--muted);font-size:.9rem;margin:0;">Todavía no hay reseñas publicadas.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const VAPID_PUBLIC_KEY = '{{ vapid_public_key }}';
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+}
+
+async function suscribirPush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.log('Push no soportado en este navegador.');
+    return;
+  }
+
+  const permiso = await Notification.requestPermission();
+  if (permiso !== 'granted') {
+    console.log('Permiso denegado.');
+    return;
+  }
+
+  const reg = await navigator.serviceWorker.ready;
+
+  const suscripcion = await reg.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+  });
+
+  const res = await fetch('/citas/push/suscribir/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(suscripcion)
+  });
+
+  const data = await res.json();
+  if (data.ok) {
+    console.log('Suscripción registrada correctamente.');
+  }
+}
+
+navigator.serviceWorker.register('/sw.js')
+  .then(reg => {
+    console.log('Service worker registrado:', reg.scope);
+    suscribirPush();
+  })
+  .catch(err => console.error('Error registrando SW:', err));
+</script>
+{% endblock %}

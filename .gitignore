@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+db.sqlite3
+private_key.pem
+public_key.pem
+*.log
+.DS_Store
+staticfiles/

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flag-header"></div>
+
+<nav class="site-nav">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/" class="brand">
+      <div class="brand-icon"><i class="bi bi-globe-americas"></i></div>
+      <div>
+        <div class="brand-name">Amaly <span>Visa</span></div>
+        <div class="brand-sub">Consultoría · EE.UU.</div>
+      </div>
+    </a>
+    <a href="/" class="btn-outline-nav">
+      <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
+  </div>
+</nav>
+
+<div style="min-height:100vh; background:var(--smoke); padding: 6rem 0 4rem; margin-top:72px; display:flex; align-items:center;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 text-center">
+        <div style="width:72px;height:72px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:2rem;color:#16a34a;">
+          <i class="bi bi-check-lg"></i>
+        </div>
+        <span class="sec-eye">★ Confirmado</span>
+        <h2 class="sec-title mb-3">¡Cita agendada!</h2>
+        <p style="color:var(--muted);font-size:.95rem;font-weight:300;line-height:1.8;margin-bottom:2rem;">
+          Tu solicitud fue recibida. Amaly se va a contactar por WhatsApp a la brevedad para confirmar los detalles.
+        </p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="/" class="btn-hero-solid">
+            <i class="bi bi-house"></i> Volver al inicio
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

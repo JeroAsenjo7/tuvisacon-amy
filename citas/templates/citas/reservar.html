@@ -1,0 +1,288 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="flag-header"></div>
+
+<nav class="site-nav">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/" class="brand">
+      <div class="brand-icon"><i class="bi bi-globe-americas"></i></div>
+      <div>
+        <div class="brand-name">Amaly <span>Visa</span></div>
+        <div class="brand-sub">Consultoría · EE.UU.</div>
+      </div>
+    </a>
+    <a href="/" class="btn-outline-nav">
+      <i class="bi bi-arrow-left"></i> Volver al inicio
+    </a>
+  </div>
+</nav>
+
+<div style="min-height:100vh; background:var(--smoke); padding: 6rem 0 4rem; margin-top: 72px;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+
+        <div class="mb-4">
+          <span class="sec-eye">★ Reserva</span>
+          <h2 class="sec-title">Agendá tu cita</h2>
+          <p class="sec-desc">Completá el formulario y Amaly se contactará a la brevedad.</p>
+        </div>
+
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="warn-bar mb-4" style="background:#f0fdf4; border-color:#86efac; border-left-color:#16a34a;">
+              <i class="bi bi-check-circle-fill" style="color:#16a34a; flex-shrink:0;"></i>
+              <p style="color:#14532d;">{{ msg }}</p>
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <form method="POST" id="form-cita">
+          {% csrf_token %}
+
+          <div class="cita-card">
+
+            <!-- Nombre -->
+            <div class="campo-grupo">
+              <label class="campo-label">Nombre y apellido <span class="req">*</span></label>
+              <input type="text" name="nombre_apellido" class="campo-input {% if form.nombre_apellido.errors %}campo-error{% endif %}"
+                placeholder="Ej: Juan Pérez" value="{{ form.nombre_apellido.value|default:'' }}" required>
+              {% for err in form.nombre_apellido.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Teléfono -->
+            <div class="campo-grupo">
+              <label class="campo-label">Número de teléfono <span class="req">*</span></label>
+              <input type="text" name="telefono" class="campo-input {% if form.telefono.errors %}campo-error{% endif %}"
+                placeholder="Ej: 2604123456" value="{{ form.telefono.value|default:'' }}" required>
+              {% for err in form.telefono.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Email -->
+            <div class="campo-grupo">
+              <label class="campo-label">Correo electrónico <span class="req">*</span></label>
+              <input type="email" name="email" class="campo-input {% if form.email.errors %}campo-error{% endif %}"
+                placeholder="Ej: juan@email.com" value="{{ form.email.value|default:'' }}" required>
+              {% for err in form.email.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Tipo de solicitud -->
+            <div class="campo-grupo">
+              <label class="campo-label">Tipo de solicitud <span class="req">*</span></label>
+              <div class="tipo-opciones">
+                <label class="tipo-opcion {% if form.tipo_solicitud.value == 'consulta' %}activa{% endif %}">
+                  <input type="radio" name="tipo_solicitud" value="consulta"
+                    {% if form.tipo_solicitud.value == 'consulta' %}checked{% endif %}>
+                  <i class="bi bi-chat-dots"></i>
+                  <span>Consulta</span>
+                </label>
+                <label class="tipo-opcion {% if form.tipo_solicitud.value == 'tramite' %}activa{% endif %}">
+                  <input type="radio" name="tipo_solicitud" value="tramite"
+                    {% if form.tipo_solicitud.value == 'tramite' %}checked{% endif %}>
+                  <i class="bi bi-file-earmark-text"></i>
+                  <span>Cita para trámite</span>
+                </label>
+              </div>
+              {% for err in form.tipo_solicitud.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Fecha -->
+            <div class="campo-grupo">
+              <label class="campo-label">Día del turno <span class="req">*</span></label>
+              <input type="date" name="fecha" id="campo-fecha"
+                class="campo-input {% if form.fecha.errors %}campo-error{% endif %}"
+                value="{{ form.fecha.value|default:'' }}" required>
+              {% for err in form.fecha.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Horario -->
+            <div class="campo-grupo">
+              <label class="campo-label">Horario <span class="req">*</span></label>
+              <div class="horarios-grid" id="horarios-grid">
+                {% for value, label in form.fields.horario.choices %}
+                  <label class="horario-opcion" id="slot-{{ value|slugify }}">
+                    <input type="radio" name="horario" value="{{ value }}"
+                      {% if form.horario.value == value %}checked{% endif %}>
+                    <span>{{ label }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+              {% for err in form.horario.errors %}
+                <span class="campo-msg-error">{{ err }}</span>
+              {% endfor %}
+            </div>
+
+            <!-- Comentarios -->
+            <div class="campo-grupo">
+              <label class="campo-label">Dudas o comentarios <span style="color:var(--muted);font-weight:300;">(opcional)</span></label>
+              <textarea name="comentarios" class="campo-input" rows="3"
+                placeholder="Contame brevemente tu situación o consulta...">{{ form.comentarios.value|default:'' }}</textarea>
+            </div>
+
+            {% if form.non_field_errors %}
+              <div class="warn-bar mb-2">
+                <i class="bi bi-exclamation-triangle-fill text-danger" style="flex-shrink:0;"></i>
+                <p>{% for err in form.non_field_errors %}{{ err }}{% endfor %}</p>
+              </div>
+            {% endif %}
+
+            <button type="submit" class="btn-hero-solid w-100 justify-content-center mt-2">
+              <i class="bi bi-calendar-check"></i> Confirmar cita
+            </button>
+
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cita-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(10,47,110,.06);
+  }
+  .campo-grupo { margin-bottom: 1.5rem; }
+  .campo-label {
+    display: block;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: .5rem;
+  }
+  .req { color: var(--red); }
+  .campo-input {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: .7rem 1rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    color: var(--ink);
+    background: #fff;
+    transition: border-color .2s, box-shadow .2s;
+    outline: none;
+  }
+  .campo-input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(10,47,110,.08); }
+  .campo-error { border-color: var(--red) !important; }
+  .campo-msg-error { font-size: .78rem; color: var(--red); margin-top: .3rem; display: block; }
+
+  .tipo-opciones { display: flex; gap: 10px; }
+  .tipo-opcion {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: .9rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: .88rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all .2s;
+  }
+  .tipo-opcion input { display: none; }
+  .tipo-opcion:hover { border-color: var(--navy); color: var(--navy); }
+  .tipo-opcion.activa { border-color: var(--navy); color: var(--navy); background: var(--light-blue); }
+
+  .horarios-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+  .horario-opcion {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: .6rem 1.2rem;
+    cursor: pointer;
+    font-size: .88rem;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all .2s;
+  }
+  .horario-opcion input { display: none; }
+  .horario-opcion:hover:not(.ocupado) { border-color: var(--navy); color: var(--navy); }
+  .horario-opcion.seleccionado { border-color: var(--navy); background: var(--navy); color: #fff; }
+  .horario-opcion.ocupado {
+    background: #f5f5f5;
+    border-color: #ddd;
+    color: #bbb;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+</style>
+
+<script>
+  const turnosOcupados = {{ turnos_ocupados|safe }};
+  const diasBloqueados = {{ dias_bloqueados|safe }};
+
+  // Tipo solicitud toggle
+  document.querySelectorAll('.tipo-opcion').forEach(label => {
+    label.addEventListener('click', () => {
+      document.querySelectorAll('.tipo-opcion').forEach(l => l.classList.remove('activa'));
+      label.classList.add('activa');
+    });
+  });
+
+  // Horario toggle
+  document.querySelectorAll('.horario-opcion').forEach(label => {
+    label.addEventListener('click', () => {
+      if (label.classList.contains('ocupado')) return;
+      document.querySelectorAll('.horario-opcion').forEach(l => l.classList.remove('seleccionado'));
+      label.classList.add('seleccionado');
+    });
+  });
+
+  // Al cambiar fecha, marcar turnos ocupados
+  document.getElementById('campo-fecha').addEventListener('change', function() {
+    const fecha = this.value;
+
+    // Verificar si el día está bloqueado
+    if (diasBloqueados.includes(fecha)) {
+      this.value = '';
+      document.querySelectorAll('.horario-opcion').forEach(label => {
+        label.classList.remove('ocupado', 'seleccionado');
+        label.querySelector('input').disabled = false;
+      });
+      alert('Este día no está disponible. Por favor elegí otra fecha.');
+      return;
+    }
+
+    // Marcar turnos ocupados normalmente
+    document.querySelectorAll('.horario-opcion').forEach(label => {
+      const radio = label.querySelector('input');
+      const key = `${fecha}_${radio.value}`;
+      if (turnosOcupados.includes(key)) {
+        label.classList.add('ocupado');
+        label.classList.remove('seleccionado');
+        radio.disabled = true;
+      } else {
+        label.classList.remove('ocupado');
+        radio.disabled = false;
+      }
+    });
+  });
+
+  // Bloquear domingos en el datepicker
+  document.getElementById('campo-fecha').addEventListener('input', function() {
+    const fecha = new Date(this.value + 'T00:00:00');
+    if (fecha.getDay() === 0) {
+      this.value = '';
+      alert('No se atiende los domingos. Elegí de lunes a sábado.');
+    }
+  });
+</script>
+{% endblock %}

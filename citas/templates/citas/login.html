@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flag-header"></div>
+
+<nav class="site-nav">
+  <div class="container d-flex justify-content-between align-items-center">
+    <a href="/" class="brand">
+      <div class="brand-icon"><i class="bi bi-globe-americas"></i></div>
+      <div>
+        <div class="brand-name">Amaly <span>Visa</span></div>
+        <div class="brand-sub">Consultoría · EE.UU.</div>
+      </div>
+    </a>
+  </div>
+</nav>
+
+<div style="min-height:100vh;background:var(--smoke);padding:6rem 0 4rem;margin-top:72px;display:flex;align-items:center;">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-4">
+        <div class="cita-card">
+          <div class="text-center mb-4">
+            <span class="sec-eye">★ Acceso</span>
+            <h2 class="sec-title">Panel Amaly</h2>
+          </div>
+          <form method="POST">
+            {% csrf_token %}
+            <div class="campo-grupo">
+              <label class="campo-label">Usuario</label>
+              <input type="text" name="username" class="campo-input" autofocus required>
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-label">Contraseña</label>
+              <input type="password" name="password" class="campo-input" required>
+            </div>
+            {% if form.errors %}
+              <div class="warn-bar mb-3">
+                <i class="bi bi-exclamation-triangle-fill text-danger" style="flex-shrink:0;"></i>
+                <p>Usuario o contraseña incorrectos.</p>
+              </div>
+            {% endif %}
+            <button type="submit" class="btn-hero-solid w-100 justify-content-center">
+              <i class="bi bi-lock"></i> Ingresar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cita-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 4px 20px rgba(10,47,110,.06);
+  }
+  .campo-grupo { margin-bottom: 1.5rem; }
+  .campo-label { display:block; font-size:.85rem; font-weight:600; color:var(--ink); margin-bottom:.5rem; }
+  .campo-input {
+    width:100%; border:1.5px solid var(--border); border-radius:8px;
+    padding:.7rem 1rem; font-family:'DM Sans',sans-serif; font-size:.9rem;
+    color:var(--ink); outline:none; transition: border-color .2s;
+  }
+  .campo-input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(10,47,110,.08); }
+</style>
+{% endblock %}

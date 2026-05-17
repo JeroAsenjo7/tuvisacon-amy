@@ -1,0 +1,439 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Amaly Visa Services{% endblock %}
+{% block nav_sub %}Consultoría · EE.UU.{% endblock %}
+
+{% block extra_css %}
+    .hero { padding: 0; background: #fff; margin-top: 72px; position: relative; overflow: hidden; }
+    .hero-inner { padding: 5rem 0 0; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: .7rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--red); margin-bottom: 1.2rem; font-family: 'DM Sans', sans-serif; }
+    .eyebrow::before { content: '★'; font-size: .65rem; }
+
+    .hero h1 { font-size: clamp(2.6rem, 5.5vw, 4rem); font-weight: 900; line-height: 1.05; color: var(--navy); letter-spacing: -.5px; margin-bottom: 1.3rem; }
+    .hero h1 em { font-style: italic; color: var(--red); }
+    .hero-lead { font-size: 1rem; line-height: 1.9; color: var(--muted); font-weight: 300; max-width: 500px; margin-bottom: 2rem; }
+    .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 2.8rem; }
+
+    .hero-stats { display: flex; gap: 2.2rem; padding: 1.8rem 0; border-top: 1px solid var(--border); }
+    .stat strong { display: block; font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 900; color: var(--navy); line-height: 1; }
+    .stat span { font-size: .73rem; color: var(--muted); font-weight: 400; letter-spacing: .3px; }
+
+    .info-panel { background: var(--smoke); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .panel-head { background: var(--navy); padding: 1.5rem 2rem; position: relative; overflow: hidden; }
+    .panel-head::before { content: '★★★'; position: absolute; right: 1.5rem; top: 50%; transform: translateY(-50%); font-size: 1.8rem; color: rgba(255,255,255,.06); letter-spacing: 4px; }
+    .panel-head h4 { font-family: 'Playfair Display', serif; color: #fff; font-size: 1.1rem; font-weight: 700; margin-bottom: .2rem; }
+    .panel-head p { color: rgba(255,255,255,.55); font-size: .8rem; margin: 0; font-weight: 300; }
+    .panel-steps { padding: 1.4rem 2rem; }
+    .p-step { display: flex; gap: 14px; align-items: flex-start; padding: .9rem 0; border-bottom: 1px solid var(--border); }
+    .p-step:last-child { border: none; padding-bottom: 0; }
+    .p-step:first-child { padding-top: 0; }
+    .p-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+    .pi-navy { background: rgba(10,47,110,.1); color: var(--navy); }
+    .pi-red  { background: rgba(178,34,52,.1);  color: var(--red); }
+    .pi-blue { background: rgba(10,47,110,.06); color: var(--navy); }
+    .p-step-text strong { display: block; font-size: .88rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+    .p-step-text p { font-size: .79rem; color: var(--muted); line-height: 1.55; margin: 0; font-weight: 300; }
+    .panel-foot { border-top: 1px solid var(--border); padding: 1.1rem 2rem; background: #fff; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .pill-wsp { display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; color: #15803d; font-size: .83rem; font-weight: 600; padding: .45rem .9rem; border-radius: 100px; text-decoration: none; transition: background .2s; }
+    .pill-wsp:hover { background: #bbf7d0; color: #15803d; }
+
+    .photo-band { display: grid; grid-template-columns: repeat(4, 1fr); height: 260px; overflow: hidden; }
+    .photo-band-item { position: relative; overflow: hidden; }
+    .photo-band-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+    .photo-band-item:hover img { transform: scale(1.06); }
+    .photo-band-item .label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,47,110,.8) 0%, transparent 100%); color: #fff; font-size: .72rem; font-weight: 600; padding: 1.2rem .8rem .7rem; letter-spacing: .5px; text-transform: uppercase; text-align: center; }
+
+    .svc-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 2rem; height: 100%; position: relative; overflow: hidden; transition: box-shadow .25s, transform .25s; }
+    .svc-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--navy); transition: background .2s; }
+    .svc-card:hover { box-shadow: 0 10px 32px rgba(10,47,110,.1); transform: translateY(-4px); }
+    .svc-card:hover::after { background: var(--red); }
+    .svc-ico { width: 52px; height: 52px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.2rem; }
+    .svc-card h5 { font-size: 1.05rem; font-weight: 700; color: var(--navy); margin-bottom: .5rem; }
+    .svc-card p { font-size: .88rem; color: var(--muted); line-height: 1.75; font-weight: 300; margin: 0; }
+
+    .proc-item { display: flex; gap: 1.5rem; padding: 2rem 0; border-bottom: 1px solid var(--border); }
+    .proc-item:last-child { border: none; }
+    .proc-num { font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: rgba(10,47,110,.08); line-height: 1; flex-shrink: 0; width: 50px; text-align: right; }
+    .proc-item h5 { font-size: 1.02rem; font-weight: 700; color: var(--navy); margin-bottom: .4rem; }
+    .proc-item p { font-size: .87rem; color: var(--muted); line-height: 1.8; margin: 0; font-weight: 300; }
+    .aside-box { background: var(--navy); border-radius: 16px; padding: 2.2rem; position: sticky; top: 100px; color: #fff; background-image: radial-gradient(circle at 90% 10%, rgba(178,34,52,.2) 0%, transparent 60%); }
+    .aside-box h4 { font-family: 'Playfair Display', serif; font-size: 1.35rem; font-weight: 700; margin-bottom: 1.5rem; }
+    .aside-row { display: flex; align-items: flex-start; gap: 12px; padding: .85rem 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+    .aside-row:last-child { border: none; }
+    .aside-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+    .aside-row p { font-size: .83rem; color: rgba(255,255,255,.65); line-height: 1.65; margin: 0; font-weight: 300; }
+
+    .cost-card { background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 2rem; height: 100%; position: relative; overflow: hidden; transition: box-shadow .25s, transform .25s; }
+    .cost-card:hover { box-shadow: 0 10px 32px rgba(10,47,110,.09); transform: translateY(-4px); }
+    .cost-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .cc-navy::before { background: var(--navy); } .cc-red::before { background: var(--red); } .cc-blue::before { background: #3B6EC8; }
+    .cost-tag { display: inline-block; font-size: .67rem; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; padding: .2rem .65rem; border-radius: 4px; margin-bottom: .9rem; }
+    .ct-navy { background: rgba(10,47,110,.08); color: var(--navy); } .ct-red { background: rgba(178,34,52,.08); color: var(--red); } .ct-blue { background: rgba(59,110,200,.1); color: #3B6EC8; }
+    .cost-card h5 { font-size: 1rem; font-weight: 700; color: var(--navy); margin-bottom: .3rem; }
+    .cost-card .sub { font-size: .78rem; color: var(--muted); margin-bottom: 1rem; font-weight: 300; }
+    .cost-card ul { list-style: none; padding: 0; margin: 0; }
+    .cost-card ul li { font-size: .83rem; color: #555; padding: .38rem 0; border-bottom: 1px solid #f0f0f0; font-weight: 300; display: flex; gap: 8px; align-items: flex-start; }
+    .cost-card ul li:last-child { border: none; }
+    .cost-card ul li i { color: var(--navy); flex-shrink: 0; font-size: .9rem; margin-top: 3px; }
+
+    .dest-band { padding: 3.5rem 0; background: var(--navy); background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px); background-size: 24px 24px; overflow: hidden; }
+    .dest-label { font-size: .65rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.35); text-align: center; margin-bottom: 2rem; }
+    .dest-scroll { display: flex; gap: 1rem; animation: scroll-cities 30s linear infinite; width: max-content; }
+    @keyframes scroll-cities { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .dest-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); color: rgba(255,255,255,.75); font-size: .83rem; font-weight: 500; padding: .55rem 1.2rem; border-radius: 100px; white-space: nowrap; }
+    .dest-pill i { font-size: .8rem; color: var(--white); }
+
+    .cta-wrap { background: var(--smoke); padding: 5.5rem 0; }
+    .cta-box { background: var(--navy); border-radius: 20px; padding: 4rem; position: relative; overflow: hidden; background-image: radial-gradient(circle at 100% 0%, rgba(178,34,52,.2) 0%, transparent 50%), radial-gradient(circle at 0% 100%, rgba(255,255,255,.04) 0%, transparent 50%); }
+    .cta-box::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--red) 0%, #E84A60 50%, var(--red) 100%); }
+    .cta-box h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 3.5vw, 2.8rem); font-weight: 900; color: #fff; margin-bottom: .7rem; line-height: 1.1; }
+    .cta-box p { color: rgba(255,255,255,.5); font-size: .95rem; font-weight: 300; margin-bottom: 2.2rem; }
+    .btn-cta-white { background: #fff; color: var(--navy); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: .95rem; padding: .9rem 2rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all .2s; border: 2px solid #fff; }
+    .btn-cta-white:hover { background: transparent; color: #fff; transform: translateY(-2px); }
+
+    #vista-archivos { display: none; min-height: 100vh; background: var(--smoke); padding: 6rem 0 4rem; }
+    #vista-archivos.activa { display: block; }
+    #vista-principal.oculto { display: none; }
+    .btn-descargar { background: var(--navy); color: #fff; font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600; padding: .55rem 1.1rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: none; transition: all .2s; flex-shrink: 0; }
+    .btn-descargar:hover { background: var(--red); color: #fff; }
+    .btn-volver { background: transparent; color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 600; padding: .55rem 1.2rem; border-radius: 8px; border: 2px solid var(--border); cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: all .2s; }
+    .btn-volver:hover { border-color: var(--navy); background: #fff; }
+
+    .star-deco { display: inline-flex; gap: 5px; margin-bottom: 1rem; }
+    .star-deco span { color: var(--red); font-size: .75rem; }
+
+    footer { background: #040B1E; color: rgba(255,255,255,.3); font-size: .82rem; padding: 2rem 0; text-align: center; }
+    footer strong { color: rgba(255,255,255,.6); }
+
+    @media(max-width:768px) {
+      .hero-inner { padding: 3rem 0 0; }
+      .cta-box { padding: 2.5rem 1.8rem; }
+      .hero-stats { gap: 1.2rem; }
+      .photo-band { grid-template-columns: repeat(2,1fr); height: 300px; }
+      .landmarks-grid { grid-template-columns: 1fr !important; height: auto !important; }
+      .landmarks-grid > div { height: 220px; }
+    }
+    @media(max-width:576px) { .photo-band { grid-template-columns: repeat(2,1fr); } }
+{% endblock %}
+
+{% block content %}
+  <div id="vista-principal">
+
+    <section class="hero">
+      <div class="hero-inner">
+        <div class="container">
+          <div class="row align-items-center g-5 pb-5">
+            <div class="col-lg-6">
+              <div class="star-deco rv"><span>★</span><span>★</span><span>★</span></div>
+              <div class="eyebrow rv">Consultoría especializada</div>
+              <h1 class="rv d1">¡Hola! Soy <em>Amaly</em> y vamos a obtener tu visa juntos</h1>
+              <p class="hero-lead rv d2">Con 14 años de experiencia dentro de la Embajada de Estados Unidos en Buenos Aires, te acompaño en cada etapa del proceso.</p>
+              <div class="hero-btns rv d3">
+                <a href="/citas/reservar/" class="btn-hero-solid"><i class="bi bi-calendar-check"></i> Reservar cita</a>
+                <a href="#proceso" class="btn-hero-outline">Cómo funciona <i class="bi bi-arrow-down"></i></a>
+              </div>
+              <div class="hero-stats rv d4">
+                <div class="stat"><strong>14+</strong><span>Años de experiencia</span></div>
+                <div class="stat"><strong>2</strong><span>Etapas del trámite</span></div>
+                <div class="stat"><strong><i class="bi bi-whatsapp" style="font-size:1.8rem;color:var(--navy);"></i></strong><span>Soporte permanente</span></div>
+              </div>
+            </div>
+            <div class="col-lg-6 rv d2">
+              <div class="info-panel">
+                <div class="panel-head">
+                  <h4>Iniciá tu trámite hoy</h4>
+                  <p>Seguí estos pasos y me contacto enseguida</p>
+                </div>
+                <div class="panel-steps">
+                  <div class="p-step"><div class="p-icon pi-navy"><i class="bi bi-person-lines-fill"></i></div><div class="p-step-text"><strong>Completá tus datos</strong><p>Agendá tu cita con tus datos en el botón de "reservar cita"</p></div></div>
+                  <div class="p-step"><div class="p-icon pi-blue"><i class="bi bi-chat-dots"></i></div><div class="p-step-text"><strong>Te contacto por WhatsApp</strong><p>Me comunico para avanzar juntos en el proceso.</p></div></div>
+                  <div class="p-step"><div class="p-icon pi-red"><i class="bi bi-search"></i></div><div class="p-step-text"><strong>Evaluación previa sin costo</strong><p>Verifico tus chances de aprobación antes del pago consular.</p></div></div>
+                </div>
+                <div class="panel-foot">
+                  <a href="https://wa.me/5492604305898" class="pill-wsp"><i class="bi bi-whatsapp"></i> Escribir por WhatsApp</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="photo-band">
+      <div class="photo-band-item"><img src="{% static 'img/newyork.jpg' %}" alt="New York City"><div class="label">New York City</div></div>
+      <div class="photo-band-item"><img src="{% static 'img/sanfrancisco.webp' %}" alt="San Francisco"><div class="label">San Francisco</div></div>
+      <div class="photo-band-item"><img src="{% static 'img/lasvegas.jpeg' %}" alt="Las Vegas"><div class="label">Las Vegas</div></div>
+      <div class="photo-band-item"><img src="{% static 'img/miami.jpg' %}" alt="Miami"><div class="label">Miami</div></div>
+    </div>
+
+    <div class="stripe"></div>
+
+    <section class="sec sec-white" id="servicios">
+      <div class="container">
+        <div class="sec-head">
+          <span class="sec-eye">★ El servicio</span>
+          <h2 class="sec-title">¿Qué incluye la consultoría?</h2>
+          <p class="sec-desc">Acompañamiento completo desde el primer contacto hasta la resolución de tu trámite.</p>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="svc-card"><div class="svc-ico ico-navy"><i class="bi bi-shield-check"></i></div><h5>Evaluación del caso</h5><p>Analizamos tus posibilidades de aprobación según criterios consulares antes del pago del derecho consular.</p></div></div>
+          <div class="col-md-4"><div class="svc-card"><div class="svc-ico ico-red"><i class="bi bi-file-earmark-text"></i></div><h5>Formularios y gestión</h5><p>Completamos formularios, creamos el perfil web y organizamos toda la documentación requerida para el trámite.</p></div></div>
+          <div class="col-md-4"><div class="svc-card"><div class="svc-ico ico-blue"><i class="bi bi-headset"></i></div><h5>Seguimiento permanente</h5><p>Estaremos en contacto por WhatsApp durante todo el proceso para resolver dudas y acompañarte en cada paso.</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stripe"></div>
+
+    <section class="sec sec-smoke" id="proceso">
+      <div class="container">
+        <div class="row g-5 align-items-start">
+          <div class="col-lg-7">
+            <span class="sec-eye">★ Cómo funciona</span>
+            <h2 class="sec-title mb-2">Las 2 etapas del trámite</h2>
+            <p class="sec-desc mb-5">Diseñado para que solo tengas que presentarte con todo listo.</p>
+            <div class="proc-item"><div class="proc-num">01</div><div><h5>Evaluación, formularios y perfil web</h5><p>Evaluación del caso según criterios consulares, determinación de documentación de respaldo, llenado de formularios y creación del perfil/usuario web. Todo antes del pago del derecho consular.</p></div></div>
+            <div class="proc-item"><div class="proc-num">02</div><div><h5>Entrevista o envío de documentación</h5><p>Pago del derecho consular y presentación en entrevista/s o envío de documentación al consulado. Una o dos entrevistas en fechas distintas, o simplemente enviar la información por correo según el tipo de trámite.</p></div></div>
+            <div class="proc-item"><div class="proc-num" style="color:var(--red);font-size:1.6rem;width:50px;">✓</div><div><h5>Solo asistís con lo que yo te preparo</h5><p>Formularios ya completados y lista precisa de documentación. Tu única tarea es presentarte o enviar lo que te indico.</p></div></div>
+          </div>
+          <div class="col-lg-5">
+            <div class="aside-box">
+              <h4>¿Qué incluye el servicio?</h4>
+              <div class="aside-row"><div class="aside-dot" style="background:#90BEFF;"></div><p>Consultoría basada en 14 años de experiencia dentro de la Embajada de EE.UU.</p></div>
+              <div class="aside-row"><div class="aside-dot" style="background:#4ade80;"></div><p>Evaluación previa al pago consular según criterios reales del consulado.</p></div>
+              <div class="aside-row"><div class="aside-dot" style="background:var(--red);"></div><p>Acompañamiento por WhatsApp durante todo el trámite.</p></div>
+              <div class="aside-row"><div class="aside-dot" style="background:#60a5fa;"></div><p>Llenado correcto de formularios y creación del perfil web del solicitante.</p></div>
+              <div class="aside-row"><div class="aside-dot" style="background:#f9a8d4;"></div><p>Determinación precisa de documentación de respaldo para cada caso.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="dest-band">
+      <p class="dest-label">Destinos que te esperan en EE.UU.</p>
+      <div style="overflow:hidden;">
+        <div class="dest-scroll">
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Nueva York</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Los Ángeles</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Miami</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Las Vegas</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Chicago</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Orlando</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> San Francisco</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Washington D.C.</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Boston</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Seattle</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Houston</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Yellowstone</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Nueva York</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Los Ángeles</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Miami</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Las Vegas</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Chicago</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Orlando</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> San Francisco</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Washington D.C.</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Boston</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Seattle</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Houston</div>
+          <div class="dest-pill"><i class="bi bi-geo-fill"></i> Yellowstone</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stripe"></div>
+
+    <section class="sec sec-white" id="costos">
+      <div class="container">
+        <div class="sec-head text-center">
+          <span class="sec-eye">★ Inversión</span>
+          <h2 class="sec-title">Costos del trámite</h2>
+          <p class="sec-desc mx-auto">Todo lo que necesitás saber antes de comenzar.</p>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-4"><div class="cost-card cc-navy"><span class="cost-tag ct-navy">Servicio Amaly</span><h5>Consultoría y gestión</h5><p class="sub">Por persona · Varía según tasa de reciprocidad</p><ul><li><i class="bi bi-check2"></i> En pesos al dólar blue</li><li><i class="bi bi-check2"></i> Más IVA si se transfiere</li><li><i class="bi bi-check2"></i> Consultar precio actualizado</li><li><i class="bi bi-check2"></i> Incluye evaluación previa</li></ul></div></div>
+          <div class="col-md-4"><div class="cost-card cc-red"><span class="cost-tag ct-red">Derecho consular</span><h5>U$S 185 por persona</h5><p class="sub">No reembolsable · Al programar la cita</p><ul><li><i class="bi bi-check2"></i> Se abona en pesos</li><li><i class="bi bi-check2"></i> Rapipago, débito o crédito</li><li><i class="bi bi-check2"></i> Crédito: dólar tarjeta + impuestos</li><li><i class="bi bi-check2"></i> Al programar envío o cita CAS</li></ul></div></div>
+          <div class="col-md-4"><div class="cost-card cc-blue"><span class="cost-tag ct-blue">Andreani</span><h5>Envío de documentación</h5><p class="sub">Antes de las citas · Por sistema</p><ul><li><i class="bi bi-check2"></i> Sucursal Andreani más cercana</li><li><i class="bi bi-check2"></i> Se gestiona por sistema</li><li><i class="bi bi-check2"></i> Pago con débito o crédito</li><li><i class="bi bi-check2"></i> Previo a asistir a las citas</li></ul></div></div>
+        </div>
+        <div class="warn-bar mt-4">
+          <i class="bi bi-exclamation-triangle-fill text-danger fs-5" style="flex-shrink:0;margin-top:2px;"></i>
+          <p><strong>Importante:</strong> Ningún trámite de visa tiene garantizada su aprobación. Esa decisión corresponde únicamente al oficial consular que tome su caso.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec sec-smoke" style="padding:0;overflow:hidden;">
+      <div class="container-fluid px-0">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;height:320px;" class="landmarks-grid">
+          <div style="position:relative;overflow:hidden;"><img src="{% static 'img/Mount_Rushmore.jpg' %}" alt="Mount Rushmore" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,47,110,.85) 0%,transparent 100%);padding:1.5rem 1.2rem .8rem;color:#fff;"><p style="margin:0;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">Black Hills</p><p style="margin:0;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;">Mount Rushmore</p></div></div>
+          <div style="position:relative;overflow:hidden;"><img src="{% static 'img/arizona.jpg' %}" alt="Gran Cañon" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,47,110,.85) 0%,transparent 100%);padding:1.5rem 1.2rem .8rem;color:#fff;"><p style="margin:0;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">Arizona</p><p style="margin:0;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;">Gran Cañon</p></div></div>
+          <div style="position:relative;overflow:hidden;"><img src="{% static 'img/times_square.jpg' %}" alt="Times Square" style="width:100%;height:100%;object-fit:cover;transition:transform .5s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"/><div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(10,47,110,.85) 0%,transparent 100%);padding:1.5rem 1.2rem .8rem;color:#fff;"><p style="margin:0;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:'DM Sans',sans-serif;">Nueva York</p><p style="margin:0;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;">Times Square</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="stripe"></div>
+
+    <section class="sec sec-white" id="resenas">
+      <div class="container">
+        <div class="sec-head text-center">
+          <span class="sec-eye">★ Opiniones</span>
+          <h2 class="sec-title">Lo que dicen los clientes</h2>
+          <p class="sec-desc mx-auto">Familias y viajeros que confiaron en Amaly para obtener su visa.</p>
+        </div>
+        {% if resenas %}
+        <div class="row g-4 mb-5">
+          {% for r in resenas %}
+          <div class="col-md-4">
+            <div class="rev-card">
+              <div class="stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+              <p class="rev-text">"{{ r.mensaje }}"</p>
+              <div class="rev-user">
+                <div class="ava" style="background:var(--navy);">{{ r.nombre|first }}</div>
+                <div>
+                  <div class="rev-name">{{ r.nombre }} {{ r.apellido }}</div>
+                  <div class="rev-meta">{{ r.creada_en|date:"Y" }}</div>
+                </div>
+              </div>
+              {% if r.respuesta %}
+              <div class="rev-respuesta">
+                <i class="bi bi-chat-dots-fill"></i>
+                <p>{{ r.respuesta }}</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-center text-muted mb-5">Todavía no hay reseñas. ¡Sé el primero!</p>
+        {% endif %}
+        <div class="text-center">
+          <button class="btn-hero-solid" data-bs-toggle="modal" data-bs-target="#modalResena">
+            <i class="bi bi-pencil-square"></i> Dejar mi reseña
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <div class="modal fade" id="modalResena" tabindex="-1" aria-labelledby="modalResenaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:16px;border:none;">
+          <div class="modal-header" style="border-bottom:1px solid var(--border);padding:1.5rem 2rem;">
+            <h5 class="modal-title" id="modalResenaLabel" style="font-weight:700;color:var(--navy);">
+              <i class="bi bi-star-fill" style="color:#f59e0b;"></i> Dejar una reseña
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form method="POST" action="{% url 'crear_resena' %}">
+            {% csrf_token %}
+            <div class="modal-body" style="padding:2rem;">
+              {% if messages %}
+                {% for msg in messages %}
+                  <div class="warn-bar mb-3" style="background:#f0fdf4;border-color:#86efac;border-left-color:#16a34a;">
+                    <i class="bi bi-check-circle-fill" style="color:#16a34a;"></i>
+                    <p style="color:#14532d;margin:0;">{{ msg }}</p>
+                  </div>
+                {% endfor %}
+              {% endif %}
+              <div class="row g-3 mb-3">
+                <div class="col-6">
+                  <label class="campo-label">Nombre</label>
+                  <input type="text" name="nombre" class="campo-input" placeholder="Tu nombre" required>
+                </div>
+                <div class="col-6">
+                  <label class="campo-label">Apellido</label>
+                  <input type="text" name="apellido" class="campo-input" placeholder="Tu apellido" required>
+                </div>
+              </div>
+              <div class="mb-1">
+                <label class="campo-label">Tu mensaje</label>
+                <textarea name="mensaje" class="campo-input" rows="4" placeholder="Contanos tu experiencia con Amaly Visa..." required style="resize:none;"></textarea>
+              </div>
+              <p style="font-size:.75rem;color:var(--muted);margin-top:.4rem;">Máximo 500 caracteres. Las reseñas son visibles para todos.</p>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid var(--border);padding:1.2rem 2rem;">
+              <button type="button" class="btn-hero-outline" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn-hero-solid"><i class="bi bi-send"></i> Publicar reseña</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <section class="cta-wrap" id="adjuntos">
+      <div class="container">
+        <div class="cta-box">
+          <div class="row align-items-center g-4">
+            <div class="col-lg-7">
+              <h2>¿Listo para dar el primer paso?</h2>
+              <p>Reservá tu cita y te cuento todo lo que necesitás saber.</p>
+              <div class="d-flex gap-3 flex-wrap">
+                <a href="/citas/reservar/" class="btn-cta-white"><i class="bi bi-calendar-check"></i> Reservar cita</a>
+              </div>
+            </div>
+            <div class="col-lg-5 text-lg-end d-none d-lg-block">
+              <p style="font-size:.75rem;color:rgba(255,255,255,.35);font-weight:300;margin:0;letter-spacing:1px;text-transform:uppercase;margin-bottom:.5rem;">14 años de experiencia</p>
+              <p style="color:rgba(255,255,255,.35);font-size:.75rem;font-weight:300;margin:0;letter-spacing:1px;text-transform:uppercase;">Embajada de EE.UU. · Buenos Aires</p>
+              <div style="margin-top:1rem;display:flex;gap:5px;justify-content:flex-end;">
+                <span style="color:rgba(255,255,255,.15);font-size:1.6rem;">★</span>
+                <span style="color:rgba(255,255,255,.1);font-size:1.6rem;">★</span>
+                <span style="color:rgba(255,255,255,.06);font-size:1.6rem;">★</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="vista-archivos">
+    <div class="container">
+      <div class="mb-5">
+        <button class="btn-volver" onclick="volverInicio()"><i class="bi bi-arrow-left"></i> Volver al inicio</button>
+      </div>
+      <div class="sec-head">
+        <span class="sec-eye">★ Documentos</span>
+        <h2 class="sec-title">Archivos adjuntos</h2>
+        <p class="sec-desc">Descargá los documentos necesarios para tu trámite.</p>
+      </div>
+      <div class="d-flex flex-column gap-3">
+        <div class="archivo-card"><div class="archivo-ico ico-pdf"><i class="bi bi-file-earmark-pdf-fill"></i></div><div class="archivo-info"><strong>Renovación de Visa o menores de 14 años</strong><span>Planilla de datos del solicitante</span></div><a href="/static/archivos/renovacion-visa-o-menores-de-14.pdf" download class="btn-descargar"><i class="bi bi-download"></i> Descargar</a></div>
+        <div class="archivo-card"><div class="archivo-ico ico-word"><i class="bi bi-file-earmark-word-fill"></i></div><div class="archivo-info"><strong>Para pago de envío renovado</strong></div><a href="/static/archivos/pago-envio-renovado.docx" download class="btn-descargar"><i class="bi bi-download"></i> Descargar</a></div>
+        <div class="archivo-card"><div class="archivo-ico ico-word"><i class="bi bi-file-earmark-word-fill"></i></div><div class="archivo-info"><strong>Respaldar lazos al país</strong><span>Chek list para llevar como documentación respaldatoria</span></div><a href="/static/archivos/respaldar-lazos-al-pais.docx" download class="btn-descargar"><i class="bi bi-download"></i> Descargar</a></div>
+        <div class="archivo-card"><div class="archivo-ico ico-word"><i class="bi bi-file-earmark-word-fill"></i></div><div class="archivo-info"><strong>Información Amaly Digital</strong><span>Tips, posibles preguntas, entrevistas</span></div><a href="/static/archivos/info-amaly-digital.docx" download class="btn-descargar"><i class="bi bi-download"></i> Descargar</a></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <footer>
+    <div class="container">
+      <strong>Amaly Visa Services</strong> · Consultoría especializada en visas americanas
+      &nbsp;·&nbsp; <strong><i class="bi bi-whatsapp"></i> 260 430-5898</strong>
+      &nbsp;·&nbsp; Buenos Aires, Argentina<br>
+      <span style="font-size:.75rem;margin-top:.5rem;display:block;">© 2026 · Todos los derechos reservados</span>
+    </div>
+  </footer>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function mostrarArchivos(e) {
+    e.preventDefault();
+    document.getElementById('vista-principal').classList.add('oculto');
+    document.getElementById('vista-archivos').classList.add('activa');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function volverInicio() {
+    document.getElementById('vista-archivos').classList.remove('activa');
+    document.getElementById('vista-principal').classList.remove('oculto');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+{% endblock %}
