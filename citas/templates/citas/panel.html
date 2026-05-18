@@ -81,8 +81,7 @@ align-items: center; gap: 4px; transition: background .2s; white-space: nowrap; 
             <strong>{{ cita.nombre_apellido }}</strong>
             <span>{{ cita.fecha|date:"d/m/Y" }} · {{ cita.horario }} hs · {{ cita.get_tipo_solicitud_display }}</span>
             {% if cita.comentarios %}
-            <span style="display:block;font-size:.75rem;color:var(--muted);margin-top:3px;">"{{
-              cita.comentarios|truncatechars:80 }}"</span>
+            <span style="display:block;font-size:.75rem;color:var(--muted);margin-top:3px;">"{{ cita.comentarios|truncatechars:80 }}"</span>
             {% endif %}
           </div>
           <div style="text-align:right;flex-shrink:0;">
