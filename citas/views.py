@@ -210,13 +210,7 @@ def guardar_suscripcion(request):
 def notificar_push(cita):
     import os
     suscripciones = PushSuscripcion.objects.all()
-    
-    # Si existe el archivo .pem lo usa, sino usa la variable de entorno
     pem_path = os.path.join(settings.BASE_DIR, 'private_key.pem')
-    if os.path.exists(pem_path):
-        vapid_key = pem_path
-    else:
-        vapid_key = settings.VAPID_PRIVATE_KEY
 
     for s in suscripciones:
         try:
@@ -229,7 +223,7 @@ def notificar_push(cita):
                     'title': '📅 Nueva cita agendada',
                     'body':  f"{cita.nombre_apellido} · {cita.fecha.strftime('%d/%m/%Y')} {cita.horario} hs",
                 }),
-                vapid_private_key=vapid_key,
+                vapid_private_key=pem_path,
                 vapid_claims=settings.VAPID_CLAIMS,
             )
         except WebPushException as e:
