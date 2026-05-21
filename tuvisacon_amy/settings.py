@@ -83,3 +83,6 @@ VAPID_PUBLIC_KEY  = config('VAPID_PUBLIC_KEY')
 VAPID_CLAIMS = {'sub': 'mailto:' + config('VAPID_CLAIMS_EMAIL', default='admin@amalyvisa.com')}
 
 CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='http://localhost,http://127.0.0.1').split(',')
+
+# email
+RESEND_API_KEY = config('RESEND_API_KEY')

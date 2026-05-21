@@ -22,6 +22,7 @@ pycparser==3.0
 python-decouple==3.8
 pywebpush==2.3.0
 requests==2.34.2
+resend==2.30.1
 sqlparse==0.5.5
 typing_extensions==4.15.0
 urllib3==2.7.0

@@ -10,6 +10,8 @@ from pywebpush import webpush, WebPushException
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
+# correo
+import resend
  
 def reservar_cita(request):
     turnos_ocupados = list(Cita.objects.values_list('fecha', 'horario'))
@@ -41,6 +43,7 @@ def reservar_cita(request):
             else:
                 cita = form.save()
                 notificar_push(cita)
+                enviar_emails_cita(cita)
                 messages.success(request, '¡Cita agendada! Amaly se contactará pronto.')
                 return redirect('cita_confirmada')
     else:
@@ -228,3 +231,68 @@ def notificar_push(cita):
             )
         except WebPushException as e:
             print(f"Error push: {e}")
+        
+
+# envios de correos electronicos 
+def enviar_emails_cita(cita):
+    resend.api_key = settings.RESEND_API_KEY
+
+    # Email al usuario
+    resend.Emails.send({
+        "from": "Amaly Visa <hola@tuvisaconamy.com>",
+        "to": cita.email,
+        "subject": "✅ Tu cita fue agendada — Amaly Visa",
+        "html": f"""
+        <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #D9E0EE;">
+            <div style="background:#0A2F6E;padding:2rem;text-align:center;">
+                <h1 style="color:#fff;font-size:1.4rem;margin:0;">Amaly <span style="color:#B22234;">Visa</span></h1>
+                <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin:.3rem 0 0;">Consultoría especializada · EE.UU.</p>
+            </div>
+            <div style="padding:2rem;">
+                <h2 style="color:#0A2F6E;font-size:1.2rem;margin-bottom:1rem;">¡Tu cita fue agendada!</h2>
+                <p style="color:#5A6A80;font-size:.95rem;line-height:1.7;">Hola <strong>{cita.nombre_apellido}</strong>, tu reserva quedó confirmada. Amaly se contactará a la brevedad por WhatsApp.</p>
+                <div style="background:#F0F4F9;border-radius:10px;padding:1.2rem 1.5rem;margin:1.5rem 0;">
+                    <p style="margin:0 0 .5rem;font-size:.85rem;color:#0A2F6E;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Detalle de tu cita</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">📅 <strong>Fecha:</strong> {cita.fecha.strftime('%d/%m/%Y')}</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">🕐 <strong>Horario:</strong> {cita.horario} hs</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">📋 <strong>Tipo:</strong> {cita.get_tipo_solicitud_display()}</p>
+                </div>
+                <p style="color:#5A6A80;font-size:.88rem;line-height:1.7;">Si tenés alguna duda podés escribir por WhatsApp al <strong>260 430-5898</strong>.</p>
+            </div>
+            <div style="background:#F0F4F9;padding:1rem 2rem;text-align:center;">
+                <p style="color:#5A6A80;font-size:.78rem;margin:0;">© 2026 Amaly Visa Services · tuvisaconamy.com</p>
+            </div>
+        </div>
+        """
+    })
+
+    # Email a Amaly
+    resend.Emails.send({
+        "from": "Amaly Visa <hola@tuvisaconamy.com>",
+        "to": "tuvisacon.amy@gmail.com",  # coreo de amaly
+        "subject": f"📅 Nueva cita — {cita.nombre_apellido}",
+        "html": f"""
+        <div style="font-family:'DM Sans',Arial,sans-serif;max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #D9E0EE;">
+            <div style="background:#0A2F6E;padding:2rem;text-align:center;">
+                <h1 style="color:#fff;font-size:1.4rem;margin:0;">Amaly <span style="color:#B22234;">Visa</span></h1>
+                <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin:.3rem 0 0;">Panel de citas</p>
+            </div>
+            <div style="padding:2rem;">
+                <h2 style="color:#0A2F6E;font-size:1.2rem;margin-bottom:1rem;">Nueva cita agendada</h2>
+                <div style="background:#F0F4F9;border-radius:10px;padding:1.2rem 1.5rem;margin:1rem 0;">
+                    <p style="margin:0 0 .5rem;font-size:.85rem;color:#0A2F6E;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Datos del cliente</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">👤 <strong>Nombre:</strong> {cita.nombre_apellido}</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">📞 <strong>Teléfono:</strong> {cita.telefono}</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">✉️ <strong>Email:</strong> {cita.email}</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">📅 <strong>Fecha:</strong> {cita.fecha.strftime('%d/%m/%Y')}</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">🕐 <strong>Horario:</strong> {cita.horario} hs</p>
+                    <p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">📋 <strong>Tipo:</strong> {cita.get_tipo_solicitud_display()}</p>
+                    {f'<p style="margin:.3rem 0;font-size:.9rem;color:#0D1B2E;">💬 <strong>Comentarios:</strong> {cita.comentarios}</p>' if cita.comentarios else ''}
+                </div>
+            </div>
+            <div style="background:#F0F4F9;padding:1rem 2rem;text-align:center;">
+                <p style="color:#5A6A80;font-size:.78rem;margin:0;">© 2026 Amaly Visa Services · tuvisaconamy.com</p>
+            </div>
+        </div>
+        """
+    })
